@@ -36,4 +36,5 @@ self.addEventListener('fetch', event => {
       return cached || fetch(event.request).catch(() => cached);
     })
   );
+
 });
