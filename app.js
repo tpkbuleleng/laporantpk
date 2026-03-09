@@ -509,6 +509,7 @@ $('#btnLogout').addEventListener('click', () => {
   state.profile = null;
   state.selectedSasaran = null;
   state.lastSasaran = [];
+  state.syncQueue = [];
   saveState();
 
   $('#profileCard').classList.add('hidden');
@@ -538,3 +539,4 @@ function escapeHtml(str) {
 function escapeAttr(str) {
   return String(str || '').replaceAll("'", "\\'");
 }
+
