@@ -1,5 +1,8 @@
 const state = {
-  apiUrl: localStorage.getItem('apiUrl') || '',
+  const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbycFq7QG1dvTAxXhbEoBnrGbWcraXoXYSxyFFCUMU1yk4BPmUeJDZHzyaZ4cbbVRyXoKg/exec';
+
+const state = {
+  apiUrl: FIXED_API_URL,
   sessionToken: localStorage.getItem('sessionToken') || '',
   profile: JSON.parse(localStorage.getItem('profile') || 'null'),
   selectedSasaran: JSON.parse(localStorage.getItem('selectedSasaran') || 'null'),
@@ -107,11 +110,9 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 20000) {
 }
 
 async function api(action, payload) {
-  const apiUrl = $('#apiUrl').value.trim();
-  if (!apiUrl) throw new Error('Isi URL Web App terlebih dahulu');
-
-  state.apiUrl = apiUrl;
-  saveState();
+  const apiUrl = FIXED_API_URL;
+state.apiUrl = apiUrl;
+saveState();
 
   const response = await fetchWithTimeout(apiUrl, {
     method: 'POST',
@@ -467,3 +468,4 @@ function escapeAttr(str) {
   return String(str || '').replaceAll("'", "\\'");
 
 }
+
