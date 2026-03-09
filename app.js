@@ -1,4 +1,4 @@
-const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbwP9zRmohJlkQpfJsGT1kAP9jb_48KpzZfzQ6dUkB7DlHEZSnkOvmoKiQv-JZ4sxZnBvg/exec';
+const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbzr5BF332fjF0lvZ4kOoXHuU_Lgjb2kPt_2TpKfL94AJfe6mCZ3_Q2eJWRg58duj1jxUA/exec';
 
 console.log('APP JS VERSION: 2026-03-10-ui-fix-fast');
 
@@ -663,3 +663,4 @@ function escapeHtml(str) {
 function escapeAttr(str) {
   return String(str || '').replaceAll("'", "\\'");
 }
+
