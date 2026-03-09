@@ -162,13 +162,16 @@ $('#btnLogin').addEventListener('click', async () => {
     saveState();
 
     if (result.data.wajib_ganti_password) {
-      $('#changePasswordCard').classList.remove('hidden');
-      toast('Login berhasil. Ganti password terlebih dahulu.');
-    } else {
-      renderProfile();
-      $('#profileCard').classList.remove('hidden');
-      toast('Login berhasil');
-    }
+  $('#changePasswordCard').classList.remove('hidden');
+  toast('Login berhasil. Ganti password terlebih dahulu.');
+} else {
+  renderProfile();
+  $('#profileCard').classList.remove('hidden');
+  toast('Login berhasil');
+
+  await loadWilayahAuto();
+  await loadSasaranAuto();
+}
   } catch (err) {
     toast(err.message);
   } finally {
@@ -208,6 +211,41 @@ function renderProfile() {
       Role: ${escapeHtml(state.profile.role_akses || 'KADER')}
     </div>
   `;
+}
+async function loadWilayahAuto() {
+  try {
+    const result = await api('getTimWilayah', {
+      session_token: state.sessionToken
+    });
+
+    $('#wilayahCard').classList.remove('hidden');
+    $('#wilayahBox').innerHTML = result.data.map(r => `
+      <div class="item">
+        <strong>${escapeHtml(r.dusun_rw)}</strong>
+        ${escapeHtml(r.desa_kelurahan)}, ${escapeHtml(r.kecamatan)}
+        <div class="badge">${String(r.is_wilayah_utama) === 'TRUE' ? 'Wilayah utama' : 'Wilayah binaan'}</div>
+      </div>
+    `).join('');
+  } catch (err) {
+    console.error('AUTO WILAYAH ERROR:', err);
+  }
+}
+
+async function loadSasaranAuto() {
+  try {
+    const result = await api('getSasaranByTim', {
+      session_token: state.sessionToken,
+      keyword: ''
+    });
+
+    state.lastSasaran = result.data || [];
+    saveState();
+
+    $('#sasaranCard').classList.remove('hidden');
+    renderSasaran(state.lastSasaran);
+  } catch (err) {
+    console.error('AUTO SASARAN ERROR:', err);
+  }
 }
 
 $('#btnLoadWilayah').addEventListener('click', async () => {
@@ -468,4 +506,5 @@ function escapeAttr(str) {
   return String(str || '').replaceAll("'", "\\'");
 
 }
+
 
