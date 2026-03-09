@@ -105,6 +105,38 @@
       <div id="sasaranBox"></div>
     </section>
 
+      <section class="card hidden" id="registrasiCard">
+  <h2>Registrasi Sasaran</h2>
+
+  <label for="regNama">Nama Sasaran</label>
+  <input id="regNama" type="text" placeholder="Nama lengkap">
+
+  <label for="regJenis">Jenis Sasaran</label>
+  <select id="regJenis">
+    <option value="">Pilih jenis sasaran</option>
+    <option value="CATIN">CATIN</option>
+    <option value="BUMIL">BUMIL</option>
+    <option value="BUFAS">BUFAS</option>
+    <option value="BADUTA">BADUTA</option>
+  </select>
+
+  <label for="regNik">NIK</label>
+  <input id="regNik" type="text" placeholder="16 digit atau dummy">
+
+  <label for="regKK">No KK</label>
+  <input id="regKK" type="text" placeholder="16 digit atau dummy">
+
+  <label for="regDusun">Dusun / RW</label>
+  <input id="regDusun" type="text" placeholder="Dusun / RW">
+
+  <label for="regAlamat">Alamat</label>
+  <textarea id="regAlamat" rows="3" placeholder="Alamat singkat"></textarea>
+
+  <div class="button-row">
+    <button class="btn btn-primary" id="btnRegistrasiSasaran">Simpan Registrasi</button>
+  </div>
+</section>
+
     <section class="card hidden" id="pendampinganCard">
       <h2>Form Pendampingan</h2>
       <div id="selectedSasaran"></div>
@@ -138,3 +170,4 @@
 </body>
 
 </html>
+
