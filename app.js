@@ -1,5 +1,6 @@
-const state = {
-  const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbycFq7QG1dvTAxXhbEoBnrGbWcraXoXYSxyFFCUMU1yk4BPmUeJDZHzyaZ4cbbVRyXoKg/exec';
+const FIXED_API_URL = 'https://script.google.com/macros/s/AKfycbwP9zRmohJlkQpfJsGT1kAP9jb_48KpzZfzQ6dUkB7DlHEZSnkOvmoKiQv-JZ4sxZnBvg/exec';
+
+console.log('APP JS VERSION: 2026-03-09-final-register-sasaran');
 
 const state = {
   apiUrl: FIXED_API_URL,
@@ -18,26 +19,9 @@ window.addEventListener('load', async () => {
     $('#app').classList.remove('hidden');
   }, 1700);
 
-  $('#apiUrl').value = state.apiUrl || '';
   setToday();
-
   refreshOfflineBanner();
   renderDraftQueue();
-
-  if (state.profile) {
-    renderProfile();
-    $('#profileCard').classList.remove('hidden');
-  }
-
-  if (state.selectedSasaran) {
-    renderSelectedSasaran();
-    $('#pendampinganCard').classList.remove('hidden');
-  }
-
-  if (state.lastSasaran.length > 0) {
-    renderSasaran(state.lastSasaran);
-    $('#sasaranCard').classList.remove('hidden');
-  }
 
   window.addEventListener('online', async () => {
     refreshOfflineBanner();
@@ -53,6 +37,18 @@ window.addEventListener('load', async () => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js').catch(() => {});
   }
+
+  if (state.profile) {
+    renderProfile();
+    $('#profileCard').classList.remove('hidden');
+    await loadWilayahAuto();
+    await loadSasaranAuto();
+  }
+
+  if (state.selectedSasaran) {
+    renderSelectedSasaran();
+    $('#pendampinganCard').classList.remove('hidden');
+  }
 });
 
 function setToday() {
@@ -62,11 +58,8 @@ function setToday() {
 
 function refreshOfflineBanner() {
   const banner = $('#offlineBanner');
-  if (navigator.onLine) {
-    banner.classList.add('hidden');
-  } else {
-    banner.classList.remove('hidden');
-  }
+  if (navigator.onLine) banner.classList.add('hidden');
+  else banner.classList.remove('hidden');
 }
 
 function toast(msg) {
@@ -86,7 +79,6 @@ function hideLoader() {
 }
 
 function saveState() {
-  localStorage.setItem('apiUrl', state.apiUrl || '');
   localStorage.setItem('sessionToken', state.sessionToken || '');
   localStorage.setItem('profile', JSON.stringify(state.profile || null));
   localStorage.setItem('selectedSasaran', JSON.stringify(state.selectedSasaran || null));
@@ -99,11 +91,7 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 20000) {
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal
-    });
-    return response;
+    return await fetch(url, { ...options, signal: controller.signal });
   } finally {
     clearTimeout(timer);
   }
@@ -111,27 +99,35 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 20000) {
 
 async function api(action, payload) {
   const apiUrl = FIXED_API_URL;
-state.apiUrl = apiUrl;
-saveState();
 
-  const response = await fetchWithTimeout(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain;charset=utf-8'
-    },
-    body: JSON.stringify({ action, payload })
-  }, 25000);
+  let response;
+  try {
+    response = await fetchWithTimeout(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({ action, payload })
+    }, 25000);
+  } catch (err) {
+    console.error('FETCH ERROR:', err);
+    throw new Error('Koneksi ke backend gagal');
+  }
 
-  const data = await response.json();
+  const text = await response.text();
+  console.log('RAW RESPONSE:', text);
+
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (err) {
+    console.error('JSON PARSE ERROR:', err, text);
+    throw new Error('Respon backend bukan JSON valid');
+  }
+
   if (!data.success) throw new Error(data.message || 'Request gagal');
   return data;
 }
-
-$('#btnSaveApi').addEventListener('click', () => {
-  state.apiUrl = $('#apiUrl').value.trim();
-  saveState();
-  toast('URL backend disimpan');
-});
 
 $('#btnFill').addEventListener('click', () => {
   const val = $('#quickAccount').value;
@@ -162,16 +158,15 @@ $('#btnLogin').addEventListener('click', async () => {
     saveState();
 
     if (result.data.wajib_ganti_password) {
-  $('#changePasswordCard').classList.remove('hidden');
-  toast('Login berhasil. Ganti password terlebih dahulu.');
-} else {
-  renderProfile();
-  $('#profileCard').classList.remove('hidden');
-  toast('Login berhasil');
-
-  await loadWilayahAuto();
-  await loadSasaranAuto();
-}
+      $('#changePasswordCard').classList.remove('hidden');
+      toast('Login berhasil. Ganti password terlebih dahulu.');
+    } else {
+      renderProfile();
+      $('#profileCard').classList.remove('hidden');
+      await loadWilayahAuto();
+      await loadSasaranAuto();
+      toast('Login berhasil');
+    }
   } catch (err) {
     toast(err.message);
   } finally {
@@ -191,6 +186,8 @@ $('#btnChangePassword').addEventListener('click', async () => {
     $('#changePasswordCard').classList.add('hidden');
     renderProfile();
     $('#profileCard').classList.remove('hidden');
+    await loadWilayahAuto();
+    await loadSasaranAuto();
     toast('Password berhasil diubah');
   } catch (err) {
     toast(err.message);
@@ -212,6 +209,7 @@ function renderProfile() {
     </div>
   `;
 }
+
 async function loadWilayahAuto() {
   try {
     const result = await api('getTimWilayah', {
@@ -251,19 +249,7 @@ async function loadSasaranAuto() {
 $('#btnLoadWilayah').addEventListener('click', async () => {
   try {
     showLoader('Memuat wilayah tim...');
-    const result = await api('getTimWilayah', {
-      session_token: state.sessionToken
-    });
-
-    $('#wilayahCard').classList.remove('hidden');
-    $('#wilayahBox').innerHTML = result.data.map(r => `
-      <div class="item">
-        <strong>${escapeHtml(r.dusun_rw)}</strong>
-        ${escapeHtml(r.desa_kelurahan)}, ${escapeHtml(r.kecamatan)}
-        <div class="badge">${String(r.is_wilayah_utama) === 'TRUE' ? 'Wilayah utama' : 'Wilayah binaan'}</div>
-      </div>
-    `).join('');
-
+    await loadWilayahAuto();
     toast('Wilayah tim dimuat');
   } catch (err) {
     toast(err.message);
@@ -272,10 +258,21 @@ $('#btnLoadWilayah').addEventListener('click', async () => {
   }
 });
 
-$('#btnLoadSasaran').addEventListener('click', loadSasaran);
-$('#btnSearchSasaran').addEventListener('click', loadSasaran);
+$('#btnLoadSasaran').addEventListener('click', async () => {
+  try {
+    showLoader('Memuat sasaran...');
+    await loadSasaranAuto();
+    toast('Data sasaran dimuat');
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    hideLoader();
+  }
+});
 
+$('#btnSearchSasaran').addEventListener('click', loadSasaran);
 let searchTimer = null;
+
 $('#keywordSasaran').addEventListener('input', () => {
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => {
@@ -343,6 +340,46 @@ function renderSelectedSasaran() {
     </div>
   `;
 }
+
+$('#btnOpenRegistrasi').addEventListener('click', () => {
+  $('#registrasiCard').classList.remove('hidden');
+  toast('Form registrasi sasaran dibuka');
+});
+
+$('#btnRegistrasiSasaran').addEventListener('click', async () => {
+  try {
+    showLoader('Menyimpan registrasi...');
+    const result = await api('registerSasaran', {
+      session_token: state.sessionToken,
+      nama_sasaran: $('#regNama').value.trim(),
+      kode_jenis_sasaran: $('#regJenis').value,
+      nik_sasaran: $('#regNik').value.trim(),
+      no_kk: $('#regKK').value.trim(),
+      tanggal_lahir: $('#regTanggalLahir').value,
+      jenis_kelamin: $('#regJenisKelamin').value,
+      dusun_rw: $('#regDusun').value.trim(),
+      alamat: $('#regAlamat').value.trim(),
+      app_version: '1.0.0'
+    });
+
+    toast(`Registrasi berhasil: ${result.data.nama_sasaran}`);
+
+    $('#regNama').value = '';
+    $('#regJenis').value = '';
+    $('#regNik').value = '';
+    $('#regKK').value = '';
+    $('#regTanggalLahir').value = '';
+    $('#regJenisKelamin').value = '';
+    $('#regDusun').value = '';
+    $('#regAlamat').value = '';
+
+    await loadSasaranAuto();
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    hideLoader();
+  }
+});
 
 function getFormByJenis(jenis) {
   const map = {
@@ -424,13 +461,8 @@ $('#btnSubmitPendampingan').addEventListener('click', async () => {
 $('#btnSyncNow').addEventListener('click', syncQueueNow);
 
 async function syncQueueNow() {
-  if (!navigator.onLine) {
-    return toast('Tidak ada koneksi internet');
-  }
-
-  if (!state.syncQueue.length) {
-    return toast('Tidak ada antrean sync');
-  }
+  if (!navigator.onLine) return toast('Tidak ada koneksi internet');
+  if (!state.syncQueue.length) return toast('Tidak ada antrean sync');
 
   showLoader('Sinkronisasi data...');
   const remain = [];
@@ -484,6 +516,7 @@ $('#btnLogout').addEventListener('click', () => {
   $('#sasaranCard').classList.add('hidden');
   $('#pendampinganCard').classList.add('hidden');
   $('#changePasswordCard').classList.add('hidden');
+  $('#registrasiCard').classList.add('hidden');
   $('#profileBox').innerHTML = '';
   $('#wilayahBox').innerHTML = '';
   $('#sasaranBox').innerHTML = '';
@@ -504,7 +537,4 @@ function escapeHtml(str) {
 
 function escapeAttr(str) {
   return String(str || '').replaceAll("'", "\\'");
-
 }
-
-
