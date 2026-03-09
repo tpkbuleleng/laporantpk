@@ -100,11 +100,23 @@
 
     <section class="card hidden" id="sasaranCard">
       <h2>Daftar Sasaran</h2>
+
+      <label for="filterJenisSasaran">Jenis Sasaran</label>
+      <select id="filterJenisSasaran">
+        <option value="">Semua Jenis Sasaran</option>
+        <option value="CATIN">CATIN</option>
+        <option value="BUMIL">BUMIL</option>
+        <option value="BUFAS">BUFAS</option>
+        <option value="BADUTA">BADUTA</option>
+      </select>
+
       <label for="keywordSasaran">Cari Sasaran</label>
-      <input id="keywordSasaran" type="text" placeholder="Nama / NIK / KK / Dusun">
+      <input id="keywordSasaran" type="text" placeholder="Nama / Dusun / RW">
+
       <div class="button-row">
         <button class="btn btn-secondary" id="btnSearchSasaran">Cari</button>
       </div>
+
       <div id="sasaranBox"></div>
     </section>
 
@@ -124,23 +136,25 @@
       </select>
 
       <label for="regNik">NIK</label>
-      <input id="regNik" type="text" placeholder="16 digit atau dummy">
+      <input id="regNik" type="text" inputmode="numeric" maxlength="16" placeholder="16 digit">
 
       <label for="regKK">No KK</label>
-      <input id="regKK" type="text" placeholder="16 digit atau dummy">
+      <input id="regKK" type="text" inputmode="numeric" maxlength="16" placeholder="16 digit">
 
       <label for="regTanggalLahir">Tanggal Lahir</label>
       <input id="regTanggalLahir" type="date">
 
-      <label for="regJenisKelamin">Jenis Kelamin</label>
-      <select id="regJenisKelamin">
-        <option value="">Pilih</option>
-        <option value="L">Laki-laki</option>
-        <option value="P">Perempuan</option>
-      </select>
+      <div id="rowRegJenisKelamin">
+        <label for="regJenisKelamin">Jenis Kelamin</label>
+        <select id="regJenisKelamin">
+          <option value="">Pilih</option>
+          <option value="L">Laki-laki</option>
+          <option value="P">Perempuan</option>
+        </select>
+      </div>
 
       <label for="regDusun">Dusun / RW</label>
-      <input id="regDusun" type="text" placeholder="Dusun / RW sesuai wilayah tim">
+      <select id="regDusun"></select>
 
       <label for="regAlamat">Alamat</label>
       <textarea id="regAlamat" rows="3" placeholder="Alamat singkat"></textarea>
