@@ -43,6 +43,7 @@ window.addEventListener('load', async () => {
     $('#profileCard').classList.remove('hidden');
     await loadWilayahAuto();
     await loadSasaranAuto();
+    $('#registrasiCard').classList.add('hidden');
   }
 
   if (state.selectedSasaran) {
@@ -539,4 +540,5 @@ function escapeHtml(str) {
 function escapeAttr(str) {
   return String(str || '').replaceAll("'", "\\'");
 }
+
 
