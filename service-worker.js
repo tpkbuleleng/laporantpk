@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tpk-buleleng-v12';
+const CACHE_NAME = 'tpk-buleleng-v13';
 const ASSETS = [
   './',
   './index.html',
@@ -38,6 +38,7 @@ self.addEventListener('fetch', event => {
     })
   );
 });
+
 
 
 
