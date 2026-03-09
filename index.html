@@ -37,6 +37,8 @@
     </header>
 
     <section class="card hidden" id="apiCard">
+      <h2>Konfigurasi Backend</h2>
+    </section>
 
     <section class="card" id="loginCard">
       <h2>Login Kader</h2>
@@ -86,8 +88,8 @@
       <div class="button-row">
         <button class="btn btn-secondary" id="btnLoadWilayah">Wilayah Tim</button>
         <button class="btn btn-secondary" id="btnLoadSasaran">Muat Sasaran</button>
-        <button class="btn btn-danger" id="btnLogout">Keluar</button>
         <button class="btn btn-secondary" id="btnOpenRegistrasi">Registrasi Sasaran</button>
+        <button class="btn btn-danger" id="btnLogout">Keluar</button>
       </div>
     </section>
 
@@ -106,37 +108,47 @@
       <div id="sasaranBox"></div>
     </section>
 
-      <section class="card hidden" id="registrasiCard">
-  <h2>Registrasi Sasaran</h2>
+    <section class="card hidden" id="registrasiCard">
+      <h2>Registrasi Sasaran</h2>
 
-  <label for="regNama">Nama Sasaran</label>
-  <input id="regNama" type="text" placeholder="Nama lengkap">
+      <label for="regNama">Nama Sasaran</label>
+      <input id="regNama" type="text" placeholder="Nama lengkap">
 
-  <label for="regJenis">Jenis Sasaran</label>
-  <select id="regJenis">
-    <option value="">Pilih jenis sasaran</option>
-    <option value="CATIN">CATIN</option>
-    <option value="BUMIL">BUMIL</option>
-    <option value="BUFAS">BUFAS</option>
-    <option value="BADUTA">BADUTA</option>
-  </select>
+      <label for="regJenis">Jenis Sasaran</label>
+      <select id="regJenis">
+        <option value="">Pilih jenis sasaran</option>
+        <option value="CATIN">CATIN</option>
+        <option value="BUMIL">BUMIL</option>
+        <option value="BUFAS">BUFAS</option>
+        <option value="BADUTA">BADUTA</option>
+      </select>
 
-  <label for="regNik">NIK</label>
-  <input id="regNik" type="text" placeholder="16 digit atau dummy">
+      <label for="regNik">NIK</label>
+      <input id="regNik" type="text" placeholder="16 digit atau dummy">
 
-  <label for="regKK">No KK</label>
-  <input id="regKK" type="text" placeholder="16 digit atau dummy">
+      <label for="regKK">No KK</label>
+      <input id="regKK" type="text" placeholder="16 digit atau dummy">
 
-  <label for="regDusun">Dusun / RW</label>
-  <input id="regDusun" type="text" placeholder="Dusun / RW">
+      <label for="regTanggalLahir">Tanggal Lahir</label>
+      <input id="regTanggalLahir" type="date">
 
-  <label for="regAlamat">Alamat</label>
-  <textarea id="regAlamat" rows="3" placeholder="Alamat singkat"></textarea>
+      <label for="regJenisKelamin">Jenis Kelamin</label>
+      <select id="regJenisKelamin">
+        <option value="">Pilih</option>
+        <option value="L">Laki-laki</option>
+        <option value="P">Perempuan</option>
+      </select>
 
-  <div class="button-row">
-    <button class="btn btn-primary" id="btnRegistrasiSasaran">Simpan Registrasi</button>
-  </div>
-</section>
+      <label for="regDusun">Dusun / RW</label>
+      <input id="regDusun" type="text" placeholder="Dusun / RW sesuai wilayah tim">
+
+      <label for="regAlamat">Alamat</label>
+      <textarea id="regAlamat" rows="3" placeholder="Alamat singkat"></textarea>
+
+      <div class="button-row">
+        <button class="btn btn-primary" id="btnRegistrasiSasaran">Simpan Registrasi</button>
+      </div>
+    </section>
 
     <section class="card hidden" id="pendampinganCard">
       <h2>Form Pendampingan</h2>
@@ -169,7 +181,4 @@
 
   <script src="app.js"></script>
 </body>
-
 </html>
-
-
